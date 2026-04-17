@@ -126,3 +126,22 @@ class CostGuard:
 
 # Singleton
 cost_guard = CostGuard(daily_budget_usd=1.0, global_daily_budget_usd=10.0)
+
+
+_monthly_spend_usd: dict[str, float] = {}
+_monthly_key: str | None = None
+
+
+def check_budget(user_id: str, estimated_cost: float) -> bool:
+    month_key = time.strftime("%Y-%m")
+    global _monthly_key
+    if _monthly_key != month_key:
+        _monthly_key = month_key
+        _monthly_spend_usd.clear()
+
+    current = _monthly_spend_usd.get(user_id, 0.0)
+    if current + estimated_cost > 10.0:
+        return False
+
+    _monthly_spend_usd[user_id] = current + estimated_cost
+    return True

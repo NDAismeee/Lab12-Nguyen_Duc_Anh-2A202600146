@@ -22,6 +22,7 @@ import os
 import time
 import signal
 import logging
+import asyncio
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 
@@ -94,6 +95,8 @@ def root():
 async def ask_agent(question: str):
     if not _is_ready:
         raise HTTPException(503, "Agent not ready")
+    if "long" in question.lower():
+        await asyncio.sleep(2)
     return {"answer": ask(question)}
 
 

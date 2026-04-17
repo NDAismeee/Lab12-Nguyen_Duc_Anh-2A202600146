@@ -59,6 +59,22 @@ curl http://localhost:8000/ask -X POST \
   -d '{"question": "Hello"}'
 ```
 
+PowerShell (Windows) (recommended):
+
+```powershell
+curl.exe -X POST "http://localhost:8000/ask" `
+  -H "Content-Type: application/json" `
+  -d "{\"question\":\"Hello\"}"
+```
+
+PowerShell (Windows) (cleanest):
+
+```powershell
+Invoke-RestMethod -Method Post -Uri "http://localhost:8000/ask" `
+  -ContentType "application/json" `
+  -Body '{"question":"Hello"}'
+```
+
 **Expected:** You get a response! 🎉
 
 **Stop the server:** Press `Ctrl+C`
@@ -80,6 +96,14 @@ Test again:
 curl http://localhost:8000/ask -X POST \
   -H "Content-Type: application/json" \
   -d '{"question": "What is Docker?"}'
+```
+
+PowerShell (Windows):
+
+```powershell
+Invoke-RestMethod -Method Post -Uri "http://localhost:8000/ask" `
+  -ContentType "application/json" `
+  -Body '{"question":"What is Docker?"}'
 ```
 
 **Expected:** Same response, but now in a container! 🐳
@@ -116,6 +140,14 @@ curl https://your-agent.railway.app/ask -X POST \
   -d '{"question": "Am I on the cloud?"}'
 ```
 
+PowerShell (Windows):
+
+```powershell
+Invoke-RestMethod -Method Post -Uri "https://your-agent.railway.app/ask" `
+  -ContentType "application/json" `
+  -Body '{"question":"Am I on the cloud?"}'
+```
+
 **Expected:** Response from the cloud! 🌐
 
 ### Step 5: Add Security (10 minutes)
@@ -123,10 +155,34 @@ curl https://your-agent.railway.app/ask -X POST \
 ```bash
 cd ../../04-api-gateway/develop
 
-# Set API key
+# Set API key (Bash/macOS/Linux)
 export AGENT_API_KEY="my-secret-key"
 
 # Run
+python app.py
+```
+
+PowerShell (Windows):
+
+```powershell
+cd ../../04-api-gateway/develop
+
+# Set API key (PowerShell)
+$env:AGENT_API_KEY="my-secret-key"
+
+# Run
+python app.py
+```
+
+Windows CMD:
+
+```bat
+cd ..\..\04-api-gateway\develop
+
+REM Set API key (CMD)
+set AGENT_API_KEY=my-secret-key
+
+REM Run
 python app.py
 ```
 
@@ -138,6 +194,12 @@ curl http://localhost:8000/ask -X POST \
 # Expected: 401 Unauthorized
 ```
 
+PowerShell (Windows):
+
+```powershell
+curl.exe -X POST "http://localhost:8000/ask?question=Hello"
+```
+
 Test with key (should work):
 ```bash
 curl http://localhost:8000/ask -X POST \
@@ -145,6 +207,12 @@ curl http://localhost:8000/ask -X POST \
   -H "Content-Type: application/json" \
   -d '{"question": "Hello"}'
 # Expected: 200 OK
+```
+
+PowerShell (Windows):
+
+```powershell
+curl.exe -X POST "http://localhost:8000/ask?question=Hello" -H "X-API-Key: my-secret-key"
 ```
 
 ---

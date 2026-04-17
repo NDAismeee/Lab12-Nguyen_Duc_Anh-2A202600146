@@ -18,6 +18,10 @@ BASE_URL = "http://localhost:8080"
 session_id = None
 
 
+def _safe(s: str) -> str:
+    return s.encode("utf-8").decode("ascii", "backslashreplace")
+
+
 def post(path: str, data: dict) -> dict:
     req = urllib.request.Request(
         f"{BASE_URL}{path}",
@@ -63,20 +67,20 @@ for i, question in enumerate(questions, 1):
 
     print(f"Request {i}: [{instance}]")
     print(f"  Q: {question}")
-    print(f"  A: {result['answer'][:80]}...")
+    print(f"  A: {_safe(result['answer'][:80])}...")
     print()
 
 print("-" * 60)
 print(f"Total requests: {len(questions)}")
 print(f"Instances used: {instances_seen}")
-print(f"✅ All requests served despite different instances!" if len(instances_seen) > 1
-      else "ℹ️  Only 1 instance (scale up với: docker compose up --scale agent=3)")
+print("OK: Requests served by multiple instances" if len(instances_seen) > 1
+      else "INFO: Only 1 instance (scale up với: docker compose up --scale agent=3)")
 
 # Verify history is intact
 print("\n--- Conversation History ---")
 history = get(f"/chat/{session_id}/history")
 print(f"Total messages: {history['count']}")
 for msg in history["messages"]:
-    print(f"  [{msg['role']}]: {msg['content'][:60]}...")
+    print(f"  [{msg['role']}]: {_safe(msg['content'][:60])}...")
 
-print("\n✅ Session history preserved across all instances via Redis!")
+print("\nOK: Session history preserved across all instances via Redis")
