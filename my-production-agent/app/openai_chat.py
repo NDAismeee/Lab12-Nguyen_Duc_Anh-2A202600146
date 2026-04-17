@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from openai import AsyncOpenAI
 
 from app.config import settings
+from app import mock_llm
 
 
 _client: AsyncOpenAI | None = None
@@ -32,8 +34,9 @@ def _to_openai_messages(history: list[dict], question: str) -> list[dict[str, An
 
 
 async def chat(question: str, history: list[dict]) -> tuple[str, dict]:
-    if not settings.openai_api_key:
-        raise RuntimeError("OPENAI_API_KEY is not set")
+    if not (settings.openai_api_key or "").strip():
+        answer = await asyncio.to_thread(mock_llm.ask, question)
+        return answer, {}
 
     client = _get_client()
     messages = _to_openai_messages(history, question)

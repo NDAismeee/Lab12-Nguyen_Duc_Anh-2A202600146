@@ -1,3 +1,4 @@
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,7 +10,10 @@ class Settings(BaseSettings):
     environment: str = "development"
     log_level: str = "INFO"
 
-    agent_api_keys: str = "change-me"
+    agent_api_keys: str = Field(
+        default="change-me",
+        validation_alias=AliasChoices("AGENT_API_KEYS", "AGENT_API_KEY"),
+    )
 
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"

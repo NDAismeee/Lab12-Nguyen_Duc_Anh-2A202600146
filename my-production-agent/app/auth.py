@@ -13,7 +13,7 @@ def verify_api_key(api_key: str | None = Security(api_key_header)) -> str:
 
     allowed = {k.strip() for k in settings.agent_api_keys.split(",") if k.strip()}
     if api_key not in allowed:
-        raise HTTPException(status_code=403, detail="Invalid API key")
+        raise HTTPException(status_code=401, detail="Invalid API key")
 
     return api_key
 

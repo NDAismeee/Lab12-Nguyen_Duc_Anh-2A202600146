@@ -1,4 +1,5 @@
 import time
+import uuid
 
 from fastapi import HTTPException
 
@@ -17,9 +18,7 @@ class RateLimiter:
         pipe = self._redis.client.pipeline()
         pipe.zremrangebyscore(key, 0, now - self._window)
         pipe.zcard(key)
-        pipe.zadd(key, {str(now): now})
-        pipe.expire(key, self._window)
-        removed, count, *_ = await pipe.execute()
+        removed, count = await pipe.execute()
         _ = removed
 
         if int(count) >= self._limit:
@@ -32,4 +31,10 @@ class RateLimiter:
                     "Retry-After": str(retry_after),
                 },
             )
+
+        member = f"{now}:{uuid.uuid4().hex}"
+        pipe = self._redis.client.pipeline()
+        pipe.zadd(key, {member: now})
+        pipe.expire(key, self._window)
+        await pipe.execute()
 
